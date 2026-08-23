@@ -26,11 +26,13 @@ final class LocalServer
         }
 
         $port = 8000 + random_int(100, 900);
-        $root = __DIR__ . '/public';
-        $command = sprintf('php -S 127.0.0.1:%d -t %s', $port, escapeshellarg($root));
 
+        // As an array rather than a string, so that no shell is involved: given a string,
+        // `proc_open()` runs `sh -c` and hands back the shell. `proc_terminate()` then kills
+        // the shell and leaves the server running — one left behind per suite, each holding
+        // the port it was given until the machine is restarted.
         $process = proc_open(
-            $command,
+            [PHP_BINARY, '-S', "127.0.0.1:{$port}", '-t', __DIR__ . '/public'],
             [1 => ['file', '/dev/null', 'w'], 2 => ['file', '/dev/null', 'w']],
             $pipes
         );

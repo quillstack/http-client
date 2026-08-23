@@ -7,6 +7,7 @@ namespace Quillstack\HttpClient\Tests\Unit;
 use Psr\Http\Client\ClientExceptionInterface;
 use Quillstack\DI\Container;
 use Quillstack\HttpClient\Client;
+use Quillstack\HttpClient\ClientResponse;
 use Quillstack\HttpClient\Exceptions\NetworkException;
 use Quillstack\HttpClient\Factory\RequestFactory;
 use Quillstack\HttpClient\Tests\Support\LocalServer;
@@ -224,6 +225,19 @@ class TestClient
             'https://nowhere-at-all-xyzzy.invalid/',
             (string) $caught?->getRequest()->getUri()
         );
+    }
+
+    /**
+     * HTTP/2 dropped the reason phrase entirely, so an unknown code often arrives with none
+     * at all — and then there is nothing to fall back on but a table this code is not in.
+     * A response which arrived is still a response.
+     */
+    public function anUnknownCodeWithNoPhraseAtAll()
+    {
+        $response = new ClientResponse(599, '');
+
+        $this->assertEqual->equal(599, $response->getStatusCode());
+        $this->assertEqual->equal('', $response->getReasonPhrase());
     }
 
     public function stopTheServer()
