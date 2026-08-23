@@ -11,7 +11,7 @@
         "quillstack",
         "php8"
     ],
-    "homepage": "https://quillstack.org/http-client",
+    "homepage": "https://quillstack.org/packages/http-client",
     "authors": [
         {
             "name": "Radek Ziemniewicz",
