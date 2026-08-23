@@ -22,18 +22,36 @@ again, and whether anything came back at all. **A client which throws on a `404`
 that a server answering you is a failure**, and an application written against it grows a
 `try`/`catch` around every call it makes.
 
-### Requirements
+## Why this exists
+
+cURL already sends HTTP requests, and it is good at it. What it leaves entirely to the caller is
+everything that decides what an application does next: **whether the thing that went wrong is
+worth trying again**, and whether anything came back at all.
+
+PSR-18 draws that line — a client throws only where there is nothing to hand back — and most
+clients cross it anyway. A `404` is an answer; a client which throws on one has decided that a
+server replying to you is a failure, and an application written against it grows a `try`/`catch`
+around every call it makes.
+
+So: a network that could not be reached is a `NetworkException`, a request that could never be
+sent is a `RequestException`, and every response the server actually sent comes back as a
+response — including the status codes nobody registered.
+
+It is also small, which is not the point but is the consequence. See the
+[benchmark](#benchmark).
+
+## Requirements
 
 - PHP 8.1 or newer
 - The cURL extension
 
-### Installation
+## Installation
 
 ```shell
 composer require quillstack/http-client
 ```
 
-### Usage
+## Usage
 
 ```php
 use Quillstack\HttpClient\Client;
@@ -176,14 +194,54 @@ chosen status code, a header holding a colon in its value, an echo of what arriv
 and a response that comes too late. A client tested against nothing is not tested, and one
 tested against somebody else's website is testing their website.
 
-### Tests
+## Benchmark
+
+Measured with [quillstack/benchmark](https://github.com/quillstack/benchmark) against a local
+server which answers the same nineteen bytes every time — what is being measured is the client,
+not the network or the server. Runs are interleaved, each figure is the median of five, and PHP
+is 8.5.7.
+
+| | Version |
+| --- | --- |
+| quillstack/http-client | v0.7.0 |
+| symfony/http-client | v7.4.17 |
+| guzzlehttp/guzzle | 7.15.3 |
+
+**One request in a fresh process** — which is what a PHP request does when it calls out to
+something:
+
+| | Time | Relative | Files loaded | Memory |
+| --- | --- | --- | --- | --- |
+| **quillstack/http-client** | **2.27 ms** | — | 24 | 292 kB |
+| symfony/http-client | 3.39 ms | 1.5× | 19 | 592 kB |
+| guzzlehttp/guzzle | 7.69 ms | 3.4× | 44 | 1792 kB |
+
+**A hundred requests from a warm process**, per request:
+
+| | Per request | Relative |
+| --- | --- | --- |
+| **quillstack/http-client** | **222 µs** | — |
+| symfony/http-client | 255 µs | 1.15× |
+| guzzlehttp/guzzle | 259 µs | 1.17× |
+
+The second table is nearly flat on purpose: once a process is warm, almost all of that quarter
+of a millisecond is the round trip, and no client can do anything about that. **The difference
+between these libraries shows up in the first table and nowhere else** — it is what each of them
+loads before it can send anything, and 1.8 MB is a lot to read to fetch nineteen bytes.
+
+**What the numbers do not say:** Guzzle has middleware, promises, concurrent pools, retries and
+cookie handling; `symfony/http-client` has HTTP/2, connection pooling and streaming responses.
+This has none of that. It sends a request and gives back what came, and being faster because you
+do less is not being faster — it is being smaller, which is a different thing to want.
+
+## Tests
 
 ```shell
 composer test
 composer stan
 ```
 
-### The rest of Quillstack
+## The rest of Quillstack
 
 This is one component of [Quillstack](https://github.com/quillstack), a PHP framework which is
 as simple to use as it is strict about what it does. Everything here is standards-first: the
@@ -194,6 +252,6 @@ only third-party code in this package is the PSR interfaces themselves.
 - [quillstack/response](https://github.com/quillstack/response) — PSR-7 responses
 - [quillstack/header-bag](https://github.com/quillstack/header-bag) — the headers underneath
 
-### License
+## License
 
 MIT — see [LICENSE](LICENSE).
