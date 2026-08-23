@@ -4,6 +4,13 @@
 [![Latest Version](https://img.shields.io/packagist/v/quillstack/http-client.svg)](https://packagist.org/packages/quillstack/http-client)
 [![Downloads](https://img.shields.io/packagist/dt/quillstack/http-client.svg)](https://packagist.org/packages/quillstack/http-client)
 [![PHP Version](https://img.shields.io/packagist/php-v/quillstack/http-client)](https://packagist.org/packages/quillstack/http-client)
+[![StyleCI](https://github.styleci.io/repos/1343764491/shield?branch=main)](https://github.styleci.io/repos/1343764491?branch=main)
+[![CodeFactor](https://www.codefactor.io/repository/github/quillstack/http-client/badge)](https://www.codefactor.io/repository/github/quillstack/http-client)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=quillstack_http-client&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=quillstack_http-client)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=quillstack_http-client&metric=coverage)](https://sonarcloud.io/summary/new_code?id=quillstack_http-client)
+[![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=quillstack_http-client&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=quillstack_http-client)
+[![Reliability](https://sonarcloud.io/api/project_badges/measure?project=quillstack_http-client&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=quillstack_http-client)
+[![Security](https://sonarcloud.io/api/project_badges/measure?project=quillstack_http-client&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=quillstack_http-client)
 [![License](https://img.shields.io/packagist/l/quillstack/http-client)](https://github.com/quillstack/http-client/blob/main/LICENSE)
 
 An HTTP client based on PSR-18, over cURL, which tells a request that could not be sent from an
